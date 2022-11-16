@@ -8,9 +8,10 @@ from statistics import mean
 
 class Bootstrap():
     
-    def __init__(self, data_list, boot_numb):
+    def __init__(self, data_list, boot_numb, percentage):
         self.data_list = data_list
         self.boot_numb = boot_numb
+        self.percentage = percentage
         self.bootstrap = []
         self.trim_data = []
 
@@ -24,27 +25,40 @@ class Bootstrap():
         
         return self.bootstrap
 
-    def trim_mean(self, percentage):
+    def trim_mean(self):
         
         self.gen_bootstrap()
         
-        obs_trim = trunc(percentage*len(self.data_list))
+        obs_trim = trunc(self.percentage*len(self.bootstrap))
         
-        self.data_list.sort()
+        self.bootstrap.sort()
         
         for i in range(obs_trim):
-            min_val = self.data_list[0]
-            max_val = self.data_list[len(self.data_list) - 1]
+            min_val = self.bootstrap[0]
+            max_val = self.bootstrap[len(self.bootstrap) - 1]
             
-            self.data_list.remove(min_val)
-            self.data_list.remove(max_val)
+            self.bootstrap.remove(min_val)
+            self.bootstrap.remove(max_val)
 
-        mean1 = mean(self.data_list)
+        mean1 = mean(self.bootstrap)
         return mean1
     
+    def sim(self, n_sim):
+        
+        mean_list = []
+        
+        for i in range(n_sim):
+            mean1 = self.trim_mean()
+            
+            mean_list.append(mean1)
+        
+        return mean_list
+            
+    
 l = [2,3,4,5,67,8,2,34,12,455,4]
-test = Bootstrap(l, 7)
+test = Bootstrap(l, 7, .2)
 test.gen_bootstrap()            
 
 
-test.trim_mean(.2)
+test.trim_mean()
+test.sim(10)
