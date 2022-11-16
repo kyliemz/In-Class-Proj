@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import scipy.stats
-import pandas
+
 import random
 from math import trunc
 from statistics import mean
