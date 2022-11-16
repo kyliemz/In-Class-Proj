@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-
+import pandas as pd
 import random
 from math import trunc
 from statistics import mean
+from plotnine import *
 
 class Bootstrap():
     
@@ -13,12 +14,11 @@ class Bootstrap():
         self.percentage = percentage
         self.bootstrap = []
         self.trim_data = []
+        self.means_list = []
 
     
     def gen_bootstrap(self):
         
-        
-            
         #self.list = self.dat.tolist()
         self.bootstrap = random.choices(self.data_list, k = self.boot_numb)
         
@@ -44,20 +44,39 @@ class Bootstrap():
     
     def sim(self, n_sim):
         
-        mean_list = []
-        
         for i in range(n_sim):
             mean1 = self.trim_mean()
             
-            mean_list.append(mean1)
+            self.means_list.append(mean1)
         
-        return mean_list
-            
+        return self.means_list
     
-l = [2,3,4,5,67,8,2,34,12,455,4]
-test = Bootstrap(l, 7, .2)
+    
+    def means_histogram(self):
+        """ """
+        # try:
+        means_df = pd.DataFrame(self.means_list, columns = ["means"])
+        
+        if means_df.empty == False:
+            plt = (ggplot(data = means_df) +
+                   aes(x = "means") +
+                   geom_histogram(bins = 50) +
+                   labs(title = "cool histogram")
+                   )
+            return plt
+        
+        else:
+            print("No simulations have run yet.")
+            print("sim method needs to be run first.")
+            
+
+
+l2 = [1,2,3,4,5,6,7,8,9,10]
+l = [2,3,4,5,67,8,2,34,12,455,4, 13, 24, 433, 123, 176, 0, -4]
+test = Bootstrap(l2, 10, .2)
 test.gen_bootstrap()            
 
 
 test.trim_mean()
-test.sim(10)
+test.sim(10000)
+test.means_histogram()
