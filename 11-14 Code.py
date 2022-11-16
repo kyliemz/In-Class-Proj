@@ -4,22 +4,23 @@ import scipy.stats
 import pandas
 import random
 from math import trunc
+from statistics import mean
 
 class Bootstrap():
     
-    def __init__(self):
-
-        self.data_list = []
+    def __init__(self, data_list, boot_numb):
+        self.data_list = data_list
+        self.boot_numb = boot_numb
         self.bootstrap = []
         self.trim_data = []
 
     
-    def gen_bootstrap(self, data_list, boot_numb):
+    def gen_bootstrap(self):
         
         
             
         #self.list = self.dat.tolist()
-        self.bootstrap = random.choices(self.data_list, k = boot_numb)
+        self.bootstrap = random.choices(self.data_list, k = self.boot_numb)
         
         return self.bootstrap
 
@@ -27,19 +28,23 @@ class Bootstrap():
         
         self.gen_bootstrap()
         
-        obs_trim = trunc(int(percentage*len(self.bootstrap)))
+        obs_trim = trunc(percentage*len(self.data_list))
         
-        self.bootstrap.sort()
+        self.data_list.sort()
         
         for i in range(obs_trim):
-            min_val = obs_trim[0]
-            max_val = obs_trim[len(self.bootstrap)]
+            min_val = self.data_list[0]
+            max_val = self.data_list[len(self.data_list) - 1]
             
-            self.bootstrap.remove(min_val, max_val)
-            
-            
-        return self.bootstrap.mean()
-            
+            self.data_list.remove(min_val)
+            self.data_list.remove(max_val)
+
+        mean1 = mean(self.data_list)
+        return mean1
+    
 l = [2,3,4,5,67,8,2,34,12,455,4]
-test = Bootstrap()
-test.gen_bootstrap(l, 2)            
+test = Bootstrap(l, 7)
+test.gen_bootstrap()            
+
+
+test.trim_mean(.2)
